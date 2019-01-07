@@ -2,11 +2,12 @@ package com.nithin.springdatajpa.product.repo;
 
 import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.nithin.springdatajpa.product.entities.Product;
 
-public interface ProductRepository extends CrudRepository<Product, Integer> {
+public interface ProductRepository extends PagingAndSortingRepository<Product, Integer> {
 	List<Product> findByName(String name);
 
 	List<Product> findByNameAndDesc(String name, String desc);
@@ -19,5 +20,5 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
 
 	List<Product> findByDescLike(String desc);
 
-	List<Product> findByIdIn(List<Integer> ids);
+	List<Product> findByIdIn(List<Integer> ids, Pageable pageable);
 }

@@ -3,6 +3,7 @@ package com.nithin.springdatajpa.product;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,10 +119,38 @@ public class ProductdataApplicationTests {
 		products.forEach(p -> System.out.println(p.getName()));
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testFindByIdIn() {
-		List<Product> products = repo.findByIdIn(Arrays.asList(1,3));
+		Pageable pageable = new PageRequest(1, 2);
+		List<Product> products = repo.findByIdIn(Arrays.asList(1, 2, 3, 4), pageable);
 		products.forEach(p -> System.out.println(p.getName()));
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testFindAllPaging() {
+		Pageable pageable = new PageRequest(0, 1);
+		Page<Product> results = repo.findAll(pageable);
+		results.forEach(p -> System.out.println(p.getName()));
+	}
+	
+	@Test
+	public void testFindAllMultiplePropertiesSorting() {
+		repo.findAll(new Sort(Direction.DESC, "name", "price")).forEach(p -> System.out.println(p.getName()));
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testFindAllMultiplePropertiesAndDirectionsSorting() {
+		repo.findAll(new Sort(new Sort.Order(Direction.DESC, "name"), new Sort.Order("price")));
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testFindAllPagingAndSorting() {
+		Pageable pageable = new PageRequest(0, 2, Direction.DESC, "name");
+		repo.findAll(pageable).forEach(p -> System.out.println(p.getName()));
 	}
 	
 	@Test
